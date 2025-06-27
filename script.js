@@ -21,7 +21,7 @@ const METRIC_MAP = {
 document.addEventListener('DOMContentLoaded', function () {
     // --- BAGIAN 2: PENGATURAN AWAL ---
     let chartInstance = null;
-    let rawCsvText = null; // Variabel untuk menyimpan data mentah
+    let rawCsvText = null;
     Chart.register(ChartDataLabels);
     setupInteractiveElements();
     
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.text();
             })
             .then(csvText => {
-                rawCsvText = csvText; // Simpan data mentah
+                rawCsvText = csvText;
                 showLoadingState(false);
                 const dataEvaluasi = parseRawCsvToData(csvText);
                 if(chartInstance) chartInstance.destroy();

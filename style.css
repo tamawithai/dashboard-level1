@@ -52,6 +52,7 @@ header { margin-bottom: 32px; } header h1 { font-size: 36px; } header .subtitle 
 .chart-card, .detail-card { grid-column: span 2; text-align: left; }
 #skor-kategori {
     font-size: 22px; font-weight: 600; margin-top: 16px;
+    opacity: 0.9;
 }
 .kategori-sangat-memuaskan { color: var(--warna-hijau-teks); }
 .kategori-memuaskan { color: var(--warna-aksen); }
@@ -77,13 +78,12 @@ footer { margin-top: 40px; text-align: center; color: var(--warna-teks-sekunder)
 #save-url-btn { background-color: var(--warna-aksen); color: white; }
 #cancel-btn { background-color: var(--warna-border); color: var(--warna-teks-utama); }
 
-/* GAYA BARU UNTUK NAVIGASI & TABEL */
 .hidden {
     display: none;
 }
 .table-container {
     width: 100%;
-    overflow-x: auto; /* Agar tabel bisa di-scroll horizontal di layar kecil */
+    overflow-x: auto;
 }
 .laporan-table {
     width: 100%;
