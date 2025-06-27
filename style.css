@@ -1,9 +1,3 @@
-### **File 2: `style.css` (Diperbarui)**
-
-Saya menambahkan kelas `.hidden` untuk menyembunyikan halaman yang tidak aktif dan gaya untuk tabel agar terlihat bagus.
-
-
-```css
 :root {
     --font-utama: 'Poppins', sans-serif; --font-size-normal: 17px; --font-size-judul: 26px;
     --font-size-angka-besar: 58px; --border-radius: 12px; --transisi-cepat: 0.3s ease;

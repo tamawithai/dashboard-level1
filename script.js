@@ -1,8 +1,3 @@
-### **File 3: `script.js` (Final)**
-
-Ini adalah bagian terpenting. Saya telah menambahkan logika navigasi dan fungsi untuk membuat tabel laporan.
-
-```javascript
 // --- BAGIAN 1: KAMUS PEMETAAN (TANPA URL DEFAULT) ---
 const METRIC_MAP = {
     "1. Ketepatan waktu dan kehadiran": "pengajar",
