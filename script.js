@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // --- BAGIAN 4: PARSER DATA (VERSI FINAL YANG DIPERBAIKI) ---
+    // --- BAGIAN 4: PARSER DATA (LOGIKA BARU YANG DIJAMIN BENAR) ---
     function parseRawCsvToData(csvText) {
         const lines = csvText.trim().split('\n').map(line => line.trim());
         if (lines.length < 2) return null;
@@ -74,24 +74,29 @@ document.addEventListener('DOMContentLoaded', function () {
             sarana: { label: 'Sarana & Prasarana', skor: [], subMetrik: [] },
         };
         
-        // Loop melalui setiap header dari Google Sheet
-        headersFromSheet.forEach((header, columnIndex) => {
-            // Cari kategori untuk header ini di dalam kamus kita
-            const categoryKey = METRIC_MAP[header];
+        // Loop melalui setiap pertanyaan yang kita kenali di KAMUS kita
+        for (const knownQuestion in METRIC_MAP) {
+            const categoryKey = METRIC_MAP[knownQuestion];
             
-            // Jika header ini ada di dalam kamus kita
-            if (categoryKey) {
+            // Cari indeks kolom dari pertanyaan ini di dalam header file CSV
+            const columnIndex = headersFromSheet.findIndex(header => header === knownQuestion);
+
+            // Jika pertanyaan tersebut ditemukan di file CSV
+            if (columnIndex !== -1) {
                 // Tambahkan nama pertanyaan (subMetrik) ke kategori yang benar
-                processedData[categoryKey].subMetrik.push(header);
-                
+                processedData[categoryKey].subMetrik.push(knownQuestion);
+
                 // Hitung skor rata-rata untuk kolom ini
-                const scoresForThisColumn = dataRows.map(row => parseFloat(row.split(',')[columnIndex]) || 0);
+                const scoresForThisColumn = dataRows.map(row => {
+                    const cells = row.split(',');
+                    return parseFloat(cells[columnIndex]) || 0;
+                });
                 const averageScore = (scoresForThisColumn.reduce((a, b) => a + b, 0) / scoresForThisColumn.length || 0);
                 
                 // Tambahkan skor rata-rata ke kategori yang benar
                 processedData[categoryKey].skor.push(averageScore);
             }
-        });
+        }
         
         return {
             jumlahResponden: dataRows.length,
