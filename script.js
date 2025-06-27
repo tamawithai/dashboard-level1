@@ -1,3 +1,8 @@
+### **File 3: `script.js` (Final)**
+
+Ini adalah bagian terpenting. Saya telah menambahkan logika navigasi dan fungsi untuk membuat tabel laporan.
+
+```javascript
 // --- BAGIAN 1: KAMUS PEMETAAN (TANPA URL DEFAULT) ---
 const METRIC_MAP = {
     "1. Ketepatan waktu dan kehadiran": "pengajar",
@@ -21,6 +26,7 @@ const METRIC_MAP = {
 document.addEventListener('DOMContentLoaded', function () {
     // --- BAGIAN 2: PENGATURAN AWAL ---
     let chartInstance = null;
+    let rawCsvText = null; // Variabel untuk menyimpan data mentah
     Chart.register(ChartDataLabels);
     setupInteractiveElements();
     
@@ -43,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.text();
             })
             .then(csvText => {
+                rawCsvText = csvText; // Simpan data mentah
                 showLoadingState(false);
                 const dataEvaluasi = parseRawCsvToData(csvText);
                 if(chartInstance) chartInstance.destroy();
@@ -206,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- BAGIAN 6: FUNGSI-FUNGSI BANTU & INTERAKTIF ---
+    // --- BAGIAN 7: FUNGSI-FUNGSI BANTU & INTERAKTIF ---
     function getKategoriSkor(skor) {
         if (skor >= 4.01) {
             return { text: 'Sangat Memuaskan', className: 'kategori-sangat-memuaskan' };
@@ -257,6 +264,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupInteractiveElements() {
+        const menuDashboard = document.getElementById('menu-dashboard');
+        const menuLaporan = document.getElementById('menu-laporan');
+        const pageDashboard = document.getElementById('page-dashboard');
+        const pageLaporan = document.getElementById('page-laporan-detail');
+
+        menuDashboard.addEventListener('click', (e) => {
+            e.preventDefault();
+            pageDashboard.classList.remove('hidden');
+            pageLaporan.classList.add('hidden');
+            menuDashboard.classList.add('active');
+            menuLaporan.classList.remove('active');
+        });
+
+        menuLaporan.addEventListener('click', (e) => {
+            e.preventDefault();
+            pageDashboard.classList.add('hidden');
+            pageLaporan.classList.remove('hidden');
+            menuDashboard.classList.remove('active');
+            menuLaporan.classList.add('active');
+            if (rawCsvText) {
+                renderLaporanTable(rawCsvText);
+            }
+        });
+
         document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('collapsed');
         });
@@ -311,6 +342,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideModal();
             }
         });
+    }
+
+    function renderLaporanTable(csvText) {
+        const container = document.getElementById('laporan-table-container');
+        if (!csvText) {
+            container.innerHTML = `<p>Data belum dimuat. Silakan atur Sumber Data terlebih dahulu.</p>`;
+            return;
+        }
+
+        const lines = csvText.trim().split('\n');
+        const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+        const rows = lines.slice(1);
+
+        let tableHtml = '<table class="laporan-table"><thead><tr>';
+        headers.forEach(header => {
+            tableHtml += `<th>${header}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody>';
+
+        rows.forEach(rowStr => {
+            const cells = rowStr.split(',');
+            tableHtml += '<tr>';
+            cells.forEach(cell => {
+                tableHtml += `<td>${cell.replace(/"/g, '').trim()}</td>`;
+            });
+            tableHtml += '</tr>';
+        });
+
+        tableHtml += '</tbody></table>';
+        container.innerHTML = tableHtml;
     }
 
     function showLoadingState(isLoading) {

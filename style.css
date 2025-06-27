@@ -1,3 +1,9 @@
+### **File 2: `style.css` (Diperbarui)**
+
+Saya menambahkan kelas `.hidden` untuk menyembunyikan halaman yang tidak aktif dan gaya untuk tabel agar terlihat bagus.
+
+
+```css
 :root {
     --font-utama: 'Poppins', sans-serif; --font-size-normal: 17px; --font-size-judul: 26px;
     --font-size-angka-besar: 58px; --border-radius: 12px; --transisi-cepat: 0.3s ease;
@@ -6,11 +12,13 @@ html.dark-mode {
     --warna-latar-utama: #1a202c; --warna-latar-sidebar: #2d3748; --warna-kartu: #2d3748;
     --warna-teks-utama: #e2e8f0; --warna-teks-sekunder: #a0aec0; --warna-aksen: #38bdf8;
     --warna-border: #4a5568; --warna-shadow: rgba(0, 0, 0, 0.2);
+    --warna-hijau-teks: #4ade80; --warna-kuning-teks: #facc15; --warna-merah-teks: #f87171;
 }
 html.light-mode {
     --warna-latar-utama: #f8f9fa; --warna-latar-sidebar: #ffffff; --warna-kartu: #ffffff;
     --warna-teks-utama: #212529; --warna-teks-sekunder: #6c757d; --warna-aksen: #007bff;
     --warna-border: #dee2e6; --warna-shadow: rgba(0, 0, 0, 0.1);
+    --warna-hijau-teks: #16a34a; --warna-kuning-teks: #ca8a04; --warna-merah-teks: #dc2626;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font-utama); background-color: var(--warna-latar-utama); color: var(--warna-teks-utama); font-size: var(--font-size-normal); transition: background-color var(--transisi-cepat), color var(--transisi-cepat); display: flex; overflow-x: hidden; }
@@ -48,22 +56,13 @@ header { margin-bottom: 32px; } header h1 { font-size: 36px; } header .subtitle 
 .skor-akhir-skala { font-size: 18px; opacity: 0.8; margin-top: 4px; } 
 .angka-metrik { font-size: 58px; font-weight: 600; }
 .chart-card, .detail-card { grid-column: span 2; text-align: left; }
-
-/* PERUBAHAN DI SINI */
 #skor-kategori {
-    font-size: 22px;
-    font-weight: 600;
-    margin-top: 16px;
-    /* Tidak ada properti 'color' di sini, sehingga akan mewarisi warna putih dari .card.highlight */
-    opacity: 0.9; /* Dibuat sedikit redup agar kontras dengan skor utama */
+    font-size: 22px; font-weight: 600; margin-top: 16px;
 }
-/* Kelas-kelas ini sekarang tidak lagi mengatur warna */
-.kategori-sangat-memuaskan,
-.kategori-memuaskan,
-.kategori-cukup,
-.kategori-kurang {
-    /* Properti warna dihapus dari sini */
-}
+.kategori-sangat-memuaskan { color: var(--warna-hijau-teks); }
+.kategori-memuaskan { color: var(--warna-aksen); }
+.kategori-cukup { color: var(--warna-kuning-teks); }
+.kategori-kurang { color: var(--warna-merah-teks); }
 
 #detail-content ul { list-style: none; padding-left: 0; }
 #detail-content li { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--warna-border); transition: background-color var(--transisi-cepat); }
@@ -83,3 +82,29 @@ footer { margin-top: 40px; text-align: center; color: var(--warna-teks-sekunder)
 .modal-actions button:hover { opacity: 0.8; }
 #save-url-btn { background-color: var(--warna-aksen); color: white; }
 #cancel-btn { background-color: var(--warna-border); color: var(--warna-teks-utama); }
+
+/* GAYA BARU UNTUK NAVIGASI & TABEL */
+.hidden {
+    display: none;
+}
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Agar tabel bisa di-scroll horizontal di layar kecil */
+}
+.laporan-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+.laporan-table th, .laporan-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--warna-border);
+    text-align: left;
+}
+.laporan-table th {
+    background-color: var(--warna-latar-utama);
+    font-weight: 600;
+}
+.laporan-table tbody tr:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
