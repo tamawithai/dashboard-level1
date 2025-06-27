@@ -54,10 +54,10 @@ header { margin-bottom: 32px; } header h1 { font-size: 36px; } header .subtitle 
     font-size: 22px; font-weight: 600; margin-top: 16px;
     opacity: 0.9;
 }
-.kategori-sangat-memuaskan { color: var(--warna-hijau-teks); }
-.kategori-memuaskan { color: var(--warna-aksen); }
-.kategori-cukup { color: var(--warna-kuning-teks); }
-.kategori-kurang { color: var(--warna-merah-teks); }
+.kategori-sangat-memuaskan { color: white; }
+.kategori-memuaskan { color: white; }
+.kategori-cukup { color: white; }
+.kategori-kurang { color: white; }
 
 #detail-content ul { list-style: none; padding-left: 0; }
 #detail-content li { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--warna-border); transition: background-color var(--transisi-cepat); }

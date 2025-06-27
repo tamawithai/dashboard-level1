@@ -74,17 +74,19 @@ document.addEventListener('DOMContentLoaded', function () {
             sarana: { label: 'Sarana & Prasarana', skor: [], subMetrik: [] },
         };
         
-        for (const knownQuestion in METRIC_MAP) {
-            const categoryKey = METRIC_MAP[knownQuestion];
-            const columnIndex = headersFromSheet.findIndex(header => header === knownQuestion);
-
-            if (columnIndex !== -1) {
-                processedData[categoryKey].subMetrik.push(knownQuestion);
-                const scoresForThisColumn = dataRows.map(row => parseFloat(row.split(',')[columnIndex]) || 0);
-                const averageScore = (scoresForThisColumn.reduce((a, b) => a + b, 0) / scoresForThisColumn.length || 0);
-                processedData[categoryKey].skor.push(averageScore);
+        headersFromSheet.forEach((header, columnIndex) => {
+            for (const knownQuestion in METRIC_MAP) {
+                if (header === knownQuestion) {
+                    const categoryKey = METRIC_MAP[knownQuestion];
+                    processedData[categoryKey].subMetrik.push(knownQuestion);
+                    
+                    const scoresForThisColumn = dataRows.map(row => parseFloat(row.split(',')[columnIndex]) || 0);
+                    const averageScore = (scoresForThisColumn.reduce((a, b) => a + b, 0) / scoresForThisColumn.length || 0);
+                    processedData[categoryKey].skor.push(averageScore);
+                    break;
+                }
             }
-        }
+        });
         
         return {
             jumlahResponden: dataRows.length,
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('skor-akhir').textContent = skorAkhir > 0 ? skorAkhir.toFixed(2) : 'N/A';
         const kategoriEl = document.getElementById('skor-kategori');
         kategoriEl.textContent = kategoriSkor.text;
-        kategoriEl.className = 'skor-akhir-kategori ' + kategoriSkor.className;
+        kategoriEl.className = kategoriSkor.className;
         
         document.getElementById('jumlah-responden').textContent = dataEvaluasi.jumlahResponden;
         
