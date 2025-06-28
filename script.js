@@ -14,7 +14,7 @@ const METRIC_MAP = {
     "3. Kemudahan dalam memperoleh materi pelatihan": "penyelenggara",
     "1. Kemudahan dalam mengakses media pelatihan": "sarana",
     "2. Kualitas audio visual pendukung pelatihan": "sarana",
-    "3. Kualitas media pelatihan (zoom meeting dan jaringan internet)": "sarana",
+    "3.  Kualitas media pelatihan (zoom meeting dan jaringan internet)": "sarana",
     "4. Pengoperasian sistem penunjang pelatihan stabil dan lancar": "sarana"
 };
 
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(csvText => {
                 rawCsvText = csvText;
                 showLoadingState(false);
+                renderDebugInfo(csvText); // Panggil fungsi debug
                 const dataEvaluasi = parseRawCsvToData(csvText);
                 if(chartInstance) chartInstance.destroy();
                 initializeDashboard(dataEvaluasi);
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // --- BAGIAN 4: PARSER DATA (LOGIKA BARU YANG DIJAMIN BENAR) ---
+    // --- BAGIAN 4: PARSER DATA (VERSI FINAL YANG DIJAMIN BENAR) ---
     function parseRawCsvToData(csvText) {
         const lines = csvText.trim().split('\n').map(line => line.trim());
         if (lines.length < 2) return null;
@@ -74,29 +75,17 @@ document.addEventListener('DOMContentLoaded', function () {
             sarana: { label: 'Sarana & Prasarana', skor: [], subMetrik: [] },
         };
         
-        // Loop melalui setiap pertanyaan yang kita kenali di KAMUS kita
-        for (const knownQuestion in METRIC_MAP) {
-            const categoryKey = METRIC_MAP[knownQuestion];
-            
-            // Cari indeks kolom dari pertanyaan ini di dalam header file CSV
-            const columnIndex = headersFromSheet.findIndex(header => header === knownQuestion);
-
-            // Jika pertanyaan tersebut ditemukan di file CSV
-            if (columnIndex !== -1) {
-                // Tambahkan nama pertanyaan (subMetrik) ke kategori yang benar
-                processedData[categoryKey].subMetrik.push(knownQuestion);
-
-                // Hitung skor rata-rata untuk kolom ini
-                const scoresForThisColumn = dataRows.map(row => {
-                    const cells = row.split(',');
-                    return parseFloat(cells[columnIndex]) || 0;
-                });
+        headersFromSheet.forEach((header, columnIndex) => {
+            const categoryKey = METRIC_MAP[header];
+            if (categoryKey) {
+                processedData[categoryKey].subMetrik.push(header);
+                
+                const scoresForThisColumn = dataRows.map(row => parseFloat(row.split(',')[columnIndex]) || 0);
                 const averageScore = (scoresForThisColumn.reduce((a, b) => a + b, 0) / scoresForThisColumn.length || 0);
                 
-                // Tambahkan skor rata-rata ke kategori yang benar
                 processedData[categoryKey].skor.push(averageScore);
             }
-        }
+        });
         
         return {
             jumlahResponden: dataRows.length,
@@ -349,6 +338,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideModal();
             }
         });
+
+        document.getElementById('toggle-debug-btn').addEventListener('click', () => {
+            document.getElementById('debug-panel').classList.toggle('hidden');
+        });
     }
 
     function renderLaporanTable(csvText) {
@@ -379,6 +372,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tableHtml += '</tbody></table>';
         container.innerHTML = tableHtml;
+    }
+
+    function renderDebugInfo(csvText) {
+        const debugContent = document.getElementById('debug-content');
+        const headersFromSheet = csvText.trim().split('\n')[0].split(',').map(h => h.replace(/"/g, '').trim());
+        
+        let tableHtml = '<table class="debug-table"><thead><tr><th>Pertanyaan di Kode (METRIC_MAP)</th><th>Judul dari Google Sheet</th><th>Status</th></tr></thead><tbody>';
+
+        for (const knownQuestion in METRIC_MAP) {
+            const isFound = headersFromSheet.includes(knownQuestion);
+            tableHtml += `<tr class="${isFound ? '' : 'debug-mismatch'}">
+                <td>${knownQuestion}</td>
+                <td>${isFound ? knownQuestion : 'TIDAK DITEMUKAN'}</td>
+                <td>${isFound ? '✅ Cocok' : '❌ Tidak Cocok'}</td>
+            </tr>`;
+        }
+
+        tableHtml += '</tbody></table>';
+        debugContent.innerHTML = tableHtml;
     }
 
     function showLoadingState(isLoading) {
