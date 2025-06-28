@@ -93,7 +93,7 @@
             </main>
         </div>
 
-        <!-- KONTEN LAPORAN DETAIL (AWALNYA TERSEMBUNYI) -->
+        <!-- KONTEN LAPORAN DETAIL -->
         <div id="page-laporan-detail" class="hidden">
             <header>
                 <h1>Laporan Detail</h1>
@@ -106,6 +106,16 @@
                     </div>
                 </div>
             </main>
+        </div>
+
+        <!-- PANEL DEBUG BARU -->
+        <div class="debug-panel-container">
+            <button id="toggle-debug-btn">Tampilkan/Sembunyikan Panel Debug</button>
+            <div id="debug-panel" class="hidden">
+                <h3>Pemeriksaan Judul Kolom</h3>
+                <p>Bandingkan "Pertanyaan di Kode" dengan "Judul dari Google Sheet". Jika ada yang tidak cocok (merah), salin teks dari kolom kanan dan tempelkan ke dalam `METRIC_MAP` di file `script.js`.</p>
+                <div id="debug-content"></div>
+            </div>
         </div>
 
         <footer>
