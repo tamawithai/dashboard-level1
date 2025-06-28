@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(csvText => {
                 rawCsvText = csvText;
                 showLoadingState(false);
+                renderDebugInfo(csvText); // Panggil fungsi debug
                 const dataEvaluasi = parseRawCsvToData(csvText);
                 if(chartInstance) chartInstance.destroy();
                 initializeDashboard(dataEvaluasi);
@@ -74,21 +75,14 @@ document.addEventListener('DOMContentLoaded', function () {
             sarana: { label: 'Sarana & Prasarana', skor: [], subMetrik: [] },
         };
         
-        // Loop melalui setiap header dari Google Sheet
         headersFromSheet.forEach((header, columnIndex) => {
-            // Cari kategori untuk header ini di dalam kamus kita
             const categoryKey = METRIC_MAP[header];
-            
-            // Jika header ini ada di dalam kamus kita
             if (categoryKey) {
-                // Tambahkan nama pertanyaan (subMetrik) ke kategori yang benar
                 processedData[categoryKey].subMetrik.push(header);
                 
-                // Hitung skor rata-rata untuk kolom ini
                 const scoresForThisColumn = dataRows.map(row => parseFloat(row.split(',')[columnIndex]) || 0);
                 const averageScore = (scoresForThisColumn.reduce((a, b) => a + b, 0) / scoresForThisColumn.length || 0);
                 
-                // Tambahkan skor rata-rata ke kategori yang benar
                 processedData[categoryKey].skor.push(averageScore);
             }
         });
@@ -344,6 +338,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideModal();
             }
         });
+
+        document.getElementById('toggle-debug-btn').addEventListener('click', () => {
+            document.getElementById('debug-panel').classList.toggle('hidden');
+        });
     }
 
     function renderLaporanTable(csvText) {
@@ -374,6 +372,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tableHtml += '</tbody></table>';
         container.innerHTML = tableHtml;
+    }
+
+    function renderDebugInfo(csvText) {
+        const debugContent = document.getElementById('debug-content');
+        const headersFromSheet = csvText.trim().split('\n')[0].split(',').map(h => h.replace(/"/g, '').trim());
+        
+        let tableHtml = '<table class="debug-table"><thead><tr><th>Pertanyaan di Kode (METRIC_MAP)</th><th>Judul dari Google Sheet</th><th>Status</th></tr></thead><tbody>';
+
+        for (const knownQuestion in METRIC_MAP) {
+            const isFound = headersFromSheet.includes(knownQuestion);
+            tableHtml += `<tr class="${isFound ? '' : 'debug-mismatch'}">
+                <td>${knownQuestion}</td>
+                <td>${isFound ? knownQuestion : 'TIDAK DITEMUKAN'}</td>
+                <td>${isFound ? '✅ Cocok' : '❌ Tidak Cocok'}</td>
+            </tr>`;
+        }
+
+        tableHtml += '</tbody></table>';
+        debugContent.innerHTML = tableHtml;
     }
 
     function showLoadingState(isLoading) {
